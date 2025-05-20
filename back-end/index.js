@@ -8,12 +8,19 @@ const admin = require("./routes/admin");
 const express = require("express");
 const app = express();
 const path = require("path");
+const fs = require("fs");
 
 console.log("connect");
 
 app.set("view engine", "pug");
 
 const mongoUri = process.env.MONGODB_URI || "mongodb://localhost/slsu_ap";
+
+// Ensure required directories exist
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 // Wait for MongoDB connection before starting server
 const startServer = async () => {
@@ -35,7 +42,7 @@ const startServer = async () => {
     app.use("/admin", admin);
 
     // Static files
-    app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+    app.use("/uploads", express.static(uploadsDir));
     app.use("/Images", express.static(path.join(__dirname, "../front-end/public/Images")));
 
     // Serve frontend static files in production
