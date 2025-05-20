@@ -22,36 +22,47 @@ mongoose
 
 app.use(cors());
 app.use(express.json());
+
+// API Routes first
+app.use("/api/university", university);
+app.use("/api/members", members);
+app.use("/admin", admin);
+
+// Static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Serve frontend static files in production BEFORE other routes
-env = process.env.NODE_ENV || "development";
+// Serve frontend static files in production
+const env = process.env.NODE_ENV || "development";
 if (env === "production") {
   console.log(
     "Running in production mode - serving frontend from:",
     path.join(__dirname, "dist")
   );
+
+  // Serve static files from the React app
   app.use(express.static(path.join(__dirname, "dist")));
-}
 
-// API Routes
-app.use("/api/university", university);
-app.use("/api/members", members);
-app.use("/admin", admin);
-
-// For development only
-if (env !== "production") {
-  app.use("/", home);
-}
-
-// Catch-all route for React Router in production
-if (env === "production") {
+  // Handle React routing, return all requests to React app
   app.get("*", (req, res) => {
-    if (!req.path.startsWith("/api") && !req.path.startsWith("/uploads")) {
+    if (
+      !req.path.startsWith("/api") &&
+      !req.path.startsWith("/uploads") &&
+      !req.path.startsWith("/admin/export-csv") &&
+      !req.path.startsWith("/admin/csv-raw")
+    ) {
+      console.log("Serving React app for path:", req.path);
       res.sendFile(path.join(__dirname, "dist", "index.html"));
     }
   });
+} else {
+  // Development routes
+  app.use("/", home);
 }
 
 const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`Listening on port ${port}`));
+app.listen(port, () => {
+  console.log(`Server running in ${env} mode on port ${port}`);
+  if (env === "production") {
+    console.log("Frontend is being served from:", path.join(__dirname, "dist"));
+  }
+});

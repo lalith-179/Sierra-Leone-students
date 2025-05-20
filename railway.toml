@@ -1,11 +1,16 @@
 [build]
 builder = "nixpacks"
 # Setup Node.js environment before running build commands
-buildCommand = "curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs && cd back-end && npm install && cd ../front-end && npm install && npm run build && cd ../back-end && cp -r ../front-end/dist ."
+buildCommand = """
+cd back-end && npm install && 
+cd ../front-end && npm install && npm run build && 
+cd ../back-end && rm -rf dist && cp -r ../front-end/dist . && 
+echo "Build complete - frontend files copied to backend/dist"
+"""
 
 [deploy]
 startCommand = "cd back-end && NODE_ENV=production npm start"
-healthcheckPath = "/"
+healthcheckPath = "/api/members"
 healthcheckTimeout = 100
 restartPolicy = "on-failure"
 maxRetries = 10
