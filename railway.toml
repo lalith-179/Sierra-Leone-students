@@ -1,6 +1,7 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd back-end && npm install && cd ../front-end && npm install && npm run build && cd ../back-end && cp -r ../front-end/dist ."
+# Setup Node.js environment before running build commands
+buildCommand = "curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs && cd back-end && npm install && cd ../front-end && npm install && npm run build && cd ../back-end && cp -r ../front-end/dist ."
 
 [deploy]
 startCommand = "cd back-end && NODE_ENV=production npm start"
@@ -12,3 +13,7 @@ maxRetries = 10
 [env]
 NODE_ENV = "production"
 PORT = "5000"
+
+# Specify Node.js version
+[nixpacks]
+node_version = "18.x"
