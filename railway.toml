@@ -1,14 +1,16 @@
 [build]
-builder = "nixpacks"
+builder = "DOCKERFILE"
+dockerfilePath = "back-end/Dockerfile"
 
 [deploy]
-startCommand = "cd back-end && NODE_ENV=production npm start"
+startCommand = "NODE_ENV=production node index.js"
 healthcheckPath = "/api/members"
 healthcheckTimeout = 100
 restartPolicy = "on-failure"
 maxRetries = 10
 
 [env]
+NODE_ENV = "production"
 NODE_ENV = "production"
 PORT = "5000"
 
