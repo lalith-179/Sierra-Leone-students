@@ -1,6 +1,21 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd back-end && npm install && cd ../front-end && npm install && npm run build && cd ../back-end && rm -rf dist && cp -r ../front-end/dist ."
+
+[phases.setup]
+nixPkgs = ["nodejs", "nodejs.npm"]
+
+[phases.install]
+cmds = [
+    "cd back-end && npm install",
+    "cd ../front-end && npm install"
+]
+
+[phases.build]
+cmds = [
+    "cd front-end && npm run build",
+    "cd ../back-end && rm -rf dist",
+    "cd ../back-end && cp -r ../front-end/dist ."
+]
 
 [deploy]
 startCommand = "cd back-end && NODE_ENV=production npm start"
@@ -13,6 +28,5 @@ maxRetries = 10
 NODE_ENV = "production"
 PORT = "5000"
 
-# Specify Node.js version
 [nixpacks]
 node_version = "18.x"
