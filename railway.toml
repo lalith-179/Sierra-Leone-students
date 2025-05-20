@@ -4,8 +4,8 @@ dockerfilePath = "back-end/Dockerfile"
 
 [deploy]
 startCommand = "node index.js"
-healthcheckPath = "/api/members"
-healthcheckTimeout = 100
+healthcheckPath = "/health"
+healthcheckTimeout = 300
 restartPolicy = "on-failure"
 maxRetries = 10
 
