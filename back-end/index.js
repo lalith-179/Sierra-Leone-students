@@ -36,6 +36,7 @@ const startServer = async () => {
 
     // Static files
     app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+    app.use("/Images", express.static(path.join(__dirname, "../front-end/public/Images")));
 
     // Serve frontend static files in production
     const env = process.env.NODE_ENV || "development";
@@ -53,6 +54,7 @@ const startServer = async () => {
         if (
           !req.path.startsWith("/api") &&
           !req.path.startsWith("/uploads") &&
+          !req.path.startsWith("/Images") &&
           !req.path.startsWith("/admin/export-csv") &&
           !req.path.startsWith("/admin/csv-raw")
         ) {
