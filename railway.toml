@@ -1,12 +1,6 @@
 [build]
 builder = "nixpacks"
-# Setup Node.js environment before running build commands
-buildCommand = """
-cd back-end && npm install && 
-cd ../front-end && npm install && npm run build && 
-cd ../back-end && rm -rf dist && cp -r ../front-end/dist . && 
-echo "Build complete - frontend files copied to backend/dist"
-"""
+buildCommand = "cd back-end && npm install && cd ../front-end && npm install && npm run build && cd ../back-end && rm -rf dist && cp -r ../front-end/dist ."
 
 [deploy]
 startCommand = "cd back-end && NODE_ENV=production npm start"
