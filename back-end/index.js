@@ -23,32 +23,35 @@ mongoose
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use("/", home);
+
+// Serve frontend static files in production BEFORE other routes
+env = process.env.NODE_ENV || "development";
+if (env === "production") {
+  console.log(
+    "Running in production mode - serving frontend from:",
+    path.join(__dirname, "dist")
+  );
+  app.use(express.static(path.join(__dirname, "dist")));
+}
+
+// API Routes
 app.use("/api/university", university);
 app.use("/api/members", members);
 app.use("/admin", admin);
 
-// Serve frontend static files in production
-env = process.env.NODE_ENV || "development";
-if (env === "production") {
-  const frontendPath = path.join(__dirname, "../front-end/dist");
-  app.use(express.static(frontendPath));
+// For development only
+if (env !== "production") {
+  app.use("/", home);
+}
 
-  // Serve index.html for any unknown route (for React Router)
+// Catch-all route for React Router in production
+if (env === "production") {
   app.get("*", (req, res) => {
-    // Only serve index.html for non-API, non-upload routes
-    if (
-      !req.path.startsWith("/api") &&
-      !req.path.startsWith("/uploads") &&
-      !req.path.startsWith("/admin/export-csv") &&
-      !req.path.startsWith("/admin/csv-raw")
-    ) {
-      res.sendFile(path.join(frontendPath, "index.html"));
-    } else {
-      res.status(404).send("Not found");
+    if (!req.path.startsWith("/api") && !req.path.startsWith("/uploads")) {
+      res.sendFile(path.join(__dirname, "dist", "index.html"));
     }
   });
 }
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Listening on port ${port}`));
