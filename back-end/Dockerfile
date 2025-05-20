@@ -18,6 +18,9 @@ RUN mkdir -p uploads && chown -R node:node uploads
 # Switch to non-root user
 USER node
 
+# Set environment variable
+ENV NODE_ENV=production
+
 EXPOSE 5000
 
 CMD ["node", "index.js"]
