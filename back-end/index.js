@@ -43,18 +43,18 @@ const startServer = async () => {
 
     // Static files
     app.use("/uploads", express.static(uploadsDir));
-    app.use("/Images", express.static(path.join(__dirname, "../front-end/public/Images")));
-
+    
     // Serve frontend static files in production
     const env = process.env.NODE_ENV || "development";
     if (env === "production") {
       console.log(
         "Running in production mode - serving frontend from:",
-        path.join(__dirname, "dist")
+        path.join(__dirname, "../front-end/dist")
       );
 
       // Serve static files from the React app
-      app.use(express.static(path.join(__dirname, "dist")));
+      app.use(express.static(path.join(__dirname, "../front-end/dist")));
+      app.use("/Images", express.static(path.join(__dirname, "../front-end/dist/Images")));
 
       // Handle React routing, return all requests to React app
       app.get("*", (req, res) => {
@@ -66,12 +66,13 @@ const startServer = async () => {
           !req.path.startsWith("/admin/csv-raw")
         ) {
           console.log("Serving React app for path:", req.path);
-          res.sendFile(path.join(__dirname, "dist", "index.html"));
+          res.sendFile(path.join(__dirname, "../front-end/dist", "index.html"));
         }
       });
     } else {
       // Development routes
       app.use("/", home);
+      app.use("/Images", express.static(path.join(__dirname, "../front-end/public/Images")));
     }
 
     const port = process.env.PORT || 5000;
@@ -80,7 +81,7 @@ const startServer = async () => {
       if (env === "production") {
         console.log(
           "Frontend is being served from:",
-          path.join(__dirname, "dist")
+          path.join(__dirname, "../front-end/dist")
         );
       }
     });
