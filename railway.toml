@@ -1,10 +1,10 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd back-end && npm install"
+buildCommand = "cd back-end && npm install && cd ../front-end && npm install && npm run build"
 
 [deploy]
 startCommand = "cd back-end && npm start"
 healthcheckPath = "/"
 healthcheckTimeout = 100
 restartPolicy = "on-failure"
-maxRetries = 10 
+maxRetries = 10
