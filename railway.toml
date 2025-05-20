@@ -1,22 +1,6 @@
 [build]
 builder = "nixpacks"
 
-[phases.setup]
-nixPkgs = ["nodejs", "nodejs.npm"]
-
-[phases.install]
-cmds = [
-    "cd back-end && npm install",
-    "cd ../front-end && npm install"
-]
-
-[phases.build]
-cmds = [
-    "cd front-end && npm run build",
-    "cd ../back-end && rm -rf dist",
-    "cd ../back-end && cp -r ../front-end/dist ."
-]
-
 [deploy]
 startCommand = "cd back-end && NODE_ENV=production npm start"
 healthcheckPath = "/api/members"
@@ -30,3 +14,5 @@ PORT = "5000"
 
 [nixpacks]
 node_version = "18.x"
+install_cmd = "cd back-end && npm install && cd ../front-end && npm install"
+build_cmd = "cd front-end && npm run build && cd ../back-end && rm -rf dist && cp -r ../front-end/dist ."
