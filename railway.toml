@@ -3,7 +3,7 @@ builder = "DOCKERFILE"
 dockerfilePath = "back-end/Dockerfile"
 
 [deploy]
-startCommand = "NODE_ENV=production node index.js"
+startCommand = "node index.js"
 healthcheckPath = "/api/members"
 healthcheckTimeout = 100
 restartPolicy = "on-failure"
