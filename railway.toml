@@ -1,10 +1,14 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd back-end && npm install && cd ../front-end && npm install && npm run build"
+buildCommand = "cd back-end && npm install && cd ../front-end && npm install && npm run build && cd ../back-end && cp -r ../front-end/dist ."
 
 [deploy]
-startCommand = "cd back-end && npm start"
+startCommand = "cd back-end && NODE_ENV=production npm start"
 healthcheckPath = "/"
 healthcheckTimeout = 100
 restartPolicy = "on-failure"
 maxRetries = 10
+
+[env]
+NODE_ENV = "production"
+PORT = "5000"
