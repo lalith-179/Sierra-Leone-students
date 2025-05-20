@@ -4,21 +4,42 @@ const { Member, validateMember } = require("../models/member");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
+
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, "../uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 // Set up multer storage to save files in 'uploads' folder and keep original filename
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../uploads"));
+    cb(null, uploadsDir);
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
+    // Sanitize filename and add timestamp
+    const sanitizedFilename = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+    cb(null, Date.now() + "-" + sanitizedFilename);
   },
 });
-const upload = multer({ storage: storage });
+
+// Configure multer to accept only PDF files
+const upload = multer({
+  storage: storage,
+  fileFilter: function (req, file, cb) {
+    if (file.mimetype !== 'application/pdf') {
+      return cb(new Error('Only PDF files are allowed!'), false);
+    }
+    cb(null, true);
+  },
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  }
+});
 
 // Serve uploaded files statically
-const uploadsPath = path.join(__dirname, "../uploads");
-router.use("/uploads", express.static(uploadsPath));
+router.use("/uploads", express.static(uploadsDir));
 
 //Get all members
 router.get("/", async (req, res) => {
@@ -127,3 +148,4 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
