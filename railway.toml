@@ -5,12 +5,14 @@ dockerfilePath = "back-end/Dockerfile"
 [deploy]
 startCommand = "node index.js"
 healthcheckPath = "/health"
-healthcheckTimeout = 300
+healthcheckTimeout = 100
 restartPolicy = "on-failure"
-maxRetries = 10
+maxRetries = 5
 
 [env]
 PORT = "5000"
+NODE_ENV = "production"
+MONGODB_URI = "your_mongodb_uri_here"  # Replace with your actual MongoDB URI
 
 [nixpacks]
 node_version = "18.x"
