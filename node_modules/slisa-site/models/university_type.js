@@ -1,7 +1,0 @@
-const stateUniversities = [
-    
-    
-  ];
-
-  const privateUniversities = [
-  ];
